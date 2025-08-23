@@ -3,63 +3,176 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>polygrav.com — Ιστοσελίδα Χρόνη (Υπό κατασκευή)</title>
-  <meta name="description" content="Η προσωπική ιστοσελίδα του Χρόνη (Polygrav). Υπό κατασκευή — σύντομα βιογραφικό, έργα και side projects, και ότι προκύψει. Φαντασία να έχουμε!." />
-  <!-- Δεν θέλουμε να ευρετηριαστεί προσωρινά -->  <meta name="theme-color" content="#0f172a" />
+  <title>polygrav.com – Dark Fantasy Loading</title>
+  <meta name="description" content="Προσωρινή σελίδα φόρτωσης • Polygrav • υπό κατασκευή" />
   <style>
-    :root {
-      --bg: #0b1220; /* dark */
-      --fg: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #22d3ee;
-      --card: #0f172a;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-    }
-    @media (prefers-color-scheme: light) {
-      :root { --bg:#ffffff; --fg:#0f172a; --muted:#475569; --card:#f8fafc; --accent:#0891b2; }
+    :root{
+      --bg:#05060b;
+      --ink:#e6eef9;
+      --muted:#9aa4b2;
+      --accent:#69e1ff;
+      --accent2:#b389ff;
+      --card:#0b0f16;
+      --glass:rgba(255,255,255,.05);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-      color:var(--fg); background:
-        radial-gradient(1200px 600px at -10% -10%, rgba(34,211,238,.10), transparent),
-        radial-gradient(900px 500px at 110% -20%, rgba(59,130,246,.08), transparent),
-        var(--bg);
-      display:grid; place-items:center;
+      margin:0; background:var(--bg); color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      overflow:hidden;
     }
-    main{width:min(820px, 92vw); text-align:center}
-    .card{background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:28px 22px; box-shadow:var(--shadow)}
-    h1{margin:.2rem 0 .4rem; font-size:clamp(26px, 4.5vw, 40px); line-height:1.2}
-    p{margin:.4rem 0}
-    .muted{color:var(--muted)}
-    .dots::after{content:"…"; display:inline-block; width:1.2em; text-align:left; animation: ellipsis 1.2s steps(3,end) infinite}
-    @keyframes ellipsis { 0%{ content:"" } 33%{ content:"." } 66%{ content:".." } 100%{ content:"..." } }
-    .row{display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; margin-top:10px}
-    a.btn{ display:inline-block; padding:.7rem 1rem; border-radius:.8rem; text-decoration:none; font-weight:700; border:1px solid rgba(255,255,255,.15); color:var(--fg) }
-    a.btn:hover{ background:rgba(255,255,255,.06) }
-    footer{ position:fixed; inset:auto 0 10px 0; text-align:center; font-size:.9rem; color:var(--muted) }
+
+    /* --- Sky gradient + vignette --- */
+    .sky{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(100% 120% at 50% 10%, rgba(179,137,255,.16), transparent 60%),
+        radial-gradient(120% 100% at 50% 120%, rgba(105,225,255,.12), transparent 60%),
+        linear-gradient(#070913, #05060b 70%);
+    }
+    .vignette{position:fixed; inset:0; pointer-events:none; z-index:3; box-shadow:inset 0 0 200px 80px rgba(0,0,0,.9)}
+
+    /* --- Twinkling stars --- */
+    .stars, .stars:before, .stars:after{
+      position:fixed; inset:-50vh -50vw; content:""; pointer-events:none; z-index:1;
+      background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.9) 60%, transparent 61%),
+                        radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,.7) 60%, transparent 61%),
+                        radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,.8) 60%, transparent 61%),
+                        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.6) 60%, transparent 61%),
+                        radial-gradient(2px 2px at 10% 60%, rgba(255,255,255,.8) 60%, transparent 61%);
+      background-size: 200vw 200vh;
+      animation: twinkle 14s linear infinite;
+      opacity:.6;
+    }
+    .stars:before{animation-duration:22s; opacity:.35}
+    .stars:after{animation-duration:36s; opacity:.25}
+    @keyframes twinkle{from{transform:translate3d(0,0,0)} to{transform:translate3d(-10vw,-10vh,0)}}
+
+    /* --- Moving fog layers --- */
+    .fog{position:fixed; inset:-20vh -20vw; z-index:2; pointer-events:none; filter: blur(18px) saturate(120%);
+      background:
+        radial-gradient(60vh 40vh at 20% 30%, rgba(179,137,255,.08), transparent 60%),
+        radial-gradient(50vh 35vh at 80% 40%, rgba(105,225,255,.07), transparent 60%),
+        radial-gradient(70vh 50vh at 50% 80%, rgba(255,255,255,.05), transparent 60%);
+      animation:fogMove 60s ease-in-out infinite alternate;
+    }
+    .fog.f2{animation-duration:85s; opacity:.7; mix-blend-mode:screen}
+    .fog.f3{animation-duration:120s; opacity:.45}
+    @keyframes fogMove{
+      0%{transform:translate3d(-6vw, -2vh, 0) scale(1)}
+      50%{transform:translate3d(4vw, 3vh, 0) scale(1.05)}
+      100%{transform:translate3d(8vw, -3vh, 0) scale(1)}
+    }
+
+    /* --- Silhouette mountains --- */
+    .mountains{
+      position:fixed; left:0; right:0; bottom:0; height:30vh; z-index:4; pointer-events:none;
+      background:
+        radial-gradient(80vh 30vh at 15% 100%, #0a0f1a 40%, transparent 41%),
+        radial-gradient(100vh 40vh at 55% 100%, #0a0f1a 40%, transparent 41%),
+        radial-gradient(70vh 28vh at 90% 100%, #0a0f1a 40%, transparent 41%);
+      opacity:.9; filter: drop-shadow(0 -10px 30px rgba(0,0,0,.6));
+    }
+
+    /* --- Center card --- */
+    .card{
+      position:relative; z-index:5; width:min(720px,92vw); margin:12vh auto 0; padding:36px 28px; border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08); backdrop-filter: blur(8px);
+      box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 0 60px rgba(179,137,255,.06);
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; font-size:14px; letter-spacing:.4px;
+      background:linear-gradient(90deg, rgba(105,225,255,.15), rgba(179,137,255,.15)); border:1px solid rgba(255,255,255,.16);
+      text-transform:lowercase; color:#ccf3ff;
+    }
+    h1{margin:12px 0 8px; font-size:clamp(28px,6vw,44px); line-height:1.1}
+    p.muted{color:var(--muted); margin:0 0 14px}
+
+    /* --- Runes row --- */
+    .runes{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 8px}
+    .r{font-size:24px; opacity:.6; filter: drop-shadow(0 0 6px rgba(179,137,255,.5));
+       animation: flicker 4s ease-in-out infinite;
+    }
+    .r:nth-child(odd){color:#c8b4ff} .r:nth-child(even){color:#8ee8ff}
+    @keyframes flicker{0%,100%{opacity:.25} 20%{opacity:.65} 40%{opacity:.4} 60%{opacity:.8} 80%{opacity:.5}}
+
+    /* --- Progress --- */
+    .progress{margin-top:18px; height:12px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; border:1px solid rgba(255,255,255,.12)}
+    .bar{height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent2)); box-shadow:0 0 20px rgba(179,137,255,.5); transition: width .25s ease}
+    .pct{margin-top:10px; font-variant-numeric: tabular-nums; letter-spacing:.5px; color:#cfe9ff}
+
+    /* --- Footer --- */
+    .foot{margin-top:18px; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:14px}
+    .dot{width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff, #00eaff 60%, #0066ff 100%); filter: drop-shadow(0 0 4px #00eaff)}
+
+    /* Responsive spacing */
+    @media (max-height:680px){ .card{margin-top:8vh; padding:24px 18px} }
   </style>
-  <meta property="og:title" content="polygrav.com — Ιστοσελίδα Χρόνη" />
-  <meta property="og:description" content="Υπό κατασκευή — σύντομα βιογραφικό, έργα και side projects, και ότι προκύψει. Φαντασία να έχουμε!." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.polygrav.com" />
 </head>
 <body>
-  <main>
-    <div class="card" role="status" aria-live="polite">
-      <div style="font-weight:800; letter-spacing:.02em; color:var(--accent);">polygrav.com</div>
-      <h1>Είμαι η ιστοσελίδα του Χρόνη</h1>
-      <p class="muted">και είμαι <strong>υπό κατασκευή</strong><span class="dots" aria-hidden="true"></span></p>
-      <p class="muted">Σύντομα θα προστεθούν βιογραφικό, έργα και side projects, και ότι προκύψει. Φαντασία να έχουμε!.</p>
-      <div class="row">
-        <!-- Βάλε εδώ αν θες προσωρινά links επικοινωνίας -->
-        <!-- Παράδειγμα: <a class="btn" href="mailto:hello@polygrav.com">hello@polygrav.com</a> -->
-        <!-- Παράδειγμα: <a class="btn" href="https://www.linkedin.com/">LinkedIn</a> -->
-      </div>
+  <div class="sky"></div>
+  <div class="stars"></div>
+  <div class="fog f1 fog"></div>
+  <div class="fog f2 fog"></div>
+  <div class="fog f3 fog"></div>
+  <div class="mountains"></div>
+  <div class="vignette"></div>
+
+  <main class="card" role="main" aria-label="Polygrav temporary loading">
+    <span class="pill">polygrav.com · realm booting…</span>
+    <h1>Είμαι η ιστοσελίδα του Χρόνη</h1>
+    <p class="muted">και είμαι <strong>υπό κατασκευή</strong>. Μέχρι τότε, κάτσε να ανοίξει η πύλη…</p>
+
+    <div class="runes" aria-hidden="true" id="runesRow">
+      <!-- runes injected by JS -->
+    </div>
+
+    <div class="progress" aria-label="Πρόοδος φόρτωσης">
+      <div class="bar" id="bar"></div>
+    </div>
+    <div class="pct" id="pct">0%</div>
+
+    <p class="muted" style="margin-top:14px">Σύντομα θα προστεθούν βιογραφικό, έργα και <em>side projects</em>. Αν έχεις φαντασία, θα σε βρω.</p>
+
+    <div class="foot">
+      <span class="dot" aria-hidden="true"></span>
+      <span>© 2025 Polygrav • Temporary page</span>
     </div>
   </main>
-  <footer>© <span id="y"></span> Polygrav • Temporary page</footer>
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+
+  <script>
+    // Floating mystic runes (Unicode symbols)
+    const runes = ['\u16A0','\u16A2','\u16B1','\u16B7','\u16C1','\u16C3','\u16C7','\u16CA','\u16CF','\u16D2','\u16DA','\u16DE','\u16DF','\u2727','\u2736','\u2729'];
+    const row = document.getElementById('runesRow');
+    for(let i=0;i<18;i++){
+      const s = document.createElement('span');
+      s.className = 'r';
+      s.textContent = runes[Math.floor(Math.random()*runes.length)];
+      s.style.animationDelay = (Math.random()*4)+'s';
+      s.style.filter = `drop-shadow(0 0 ${3+Math.random()*6}px rgba(179,137,255,.6))`;
+      row.appendChild(s);
+    }
+
+    // Fake loading that loops 0→100 continuously
+    const bar = document.getElementById('bar');
+    const pct = document.getElementById('pct');
+    let p = 0, dir = 1;
+    function tick(){
+      p += dir * (0.4 + Math.random()*1.4);
+      if(p >= 100){ p = 100; dir = -1; setTimeout(()=>{}, 400); }
+      if(p <= 0){ p = 0; dir = 1; }
+      bar.style.width = p.toFixed(1) + '%';
+      pct.textContent = Math.round(p) + '%';
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Accessibility: reduce motion preference
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(mq.matches){
+      document.querySelectorAll('.fog, .stars').forEach(el=>{ el.style.animation = 'none'; });
+    }
+  </script>
 </body>
 </html>
