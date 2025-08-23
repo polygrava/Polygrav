@@ -3,354 +3,323 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>polygrav.com — Υπό Κατασκευή · Τρίλιζα</title>
-  <meta name="description" content="Η σελίδα του Χρόνη (Polychronis Gravalas) — Υπό κατασκευή. Παίξε τρίλιζα με ένα ασταθές σκοτεινό bot." />
+  <title>Η σελίδα του Χρόνη — Under Construction 🏗</title>
+  <meta name="description" content="Η ιστοσελίδα του Χρόνη βρίσκεται under construction. Φορτωτής σπρώχνει χώμα (loading) και ένας worker stick-man φοβάται στο κλουβί." />
   <style>
     :root{
-      --bg:#05060b; --ink:#e6eef9; --muted:#9aa4b2;
-      --accent:#69e1ff; --accent2:#b389ff; --card:#0b0f16; --glass:rgba(255,255,255,.05);
-      --glow:0 0 10px rgba(105,225,255,.45), 0 0 30px rgba(179,137,255,.25);
+      --bg:#0a0d12; --ink:#e9f2ff; --muted:#9aa4b2;
+      --accent:#69e1ff; --accent2:#ffcc66; --glass:rgba(255,255,255,.06);
+      --hazardA:#0b0e14; --hazardB:#ffc107;
+      --dirt:#7a5a2b; --dirt2:#5e4520; --steel:#6b7685;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; background:radial-gradient(1200px 700px at 20% 10%, rgba(179,137,255,.12), transparent 60%),
-                         radial-gradient(900px 600px at 80% 80%, rgba(105,225,255,.12), transparent 60%),
-                         var(--bg);
+      margin:0; background:
+        radial-gradient(1100px 600px at 15% 10%, rgba(105,225,255,.12), transparent 60%),
+        radial-gradient(900px 600px at 80% 80%, rgba(255,204,102,.10), transparent 60%),
+        var(--bg);
       color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Arial;
-      display:flex; align-items:center; justify-content:center; overflow:hidden;
+      display:flex; align-items:center; justify-content:center; padding:24px;
     }
-    /* starfield canvas */
-    canvas#fx{position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.6; mix-blend-mode:screen;}
 
-    .wrap{
-      position:relative; z-index:1; width:min(92vw, 760px);
+    /* ===== Loader (Bulldozer pushing dirt) ===== */
+    #loader{
+      position:fixed; inset:0; z-index:9999; display:grid; place-items:center;
+      background:
+        radial-gradient(1100px 600px at 15% 10%, rgba(105,225,255,.12), transparent 60%),
+        radial-gradient(900px 600px at 80% 80%, rgba(255,204,102,.10), transparent 60%),
+        var(--bg);
+      transition:opacity .4s ease, visibility .4s ease;
+    }
+    #loader.hidden{ opacity:0; visibility:hidden }
+    .scene{
+      width:min(92vw, 900px); height:min(70vh, 360px);
       background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:28px 22px;
-      box-shadow: var(--glow);
+      border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px 18px 0;
       backdrop-filter: blur(8px) saturate(130%);
+      box-shadow: 0 0 18px rgba(105,225,255,.35), 0 0 48px rgba(179,137,255,.18);
+      position:relative; overflow:hidden;
     }
-    header{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
-    .brand{
-      display:flex; gap:12px; align-items:center;
+    .scene h2{
+      margin:0 0 8px; font-size:clamp(1.05rem, 2.6vw, 1.3rem); text-align:center; color:var(--ink);
     }
-    .orb{
-      width:14px; height:14px; border-radius:50%;
-      background: radial-gradient(circle at 35% 35%, #fff, #69e1ff 40%, transparent 60%);
-      box-shadow: 0 0 12px #69e1ffaa, 0 0 28px #b389ff66, inset 0 0 12px #b389ff55;
-      animation: pulse 2.8s ease-in-out infinite;
+    .ground{
+      position:absolute; left:0; right:0; bottom:0; height:84px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.15)),
+        repeating-linear-gradient(0deg, var(--dirt) 0 6px, var(--dirt2) 6px 12px);
+      border-top:1px solid rgba(255,255,255,.08);
     }
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+    .rig{
+      position:absolute; left:-15%; bottom:70px; width:240px; height:140px;
+      animation: dozer 6s linear infinite;
+      will-change: transform;
+    }
+    @keyframes dozer{
+      0%{ transform: translateX(0) }
+      100%{ transform: translateX(125vw) }
+    }
+    .dozer{ width:240px; height:140px; filter: drop-shadow(0 6px 8px rgba(0,0,0,.35)); }
+    /* Dirt spray emitted near blade; children move with the rig, clods animate individually */
+    .spray{ position:absolute; left:164px; top:66px; width:0; height:0; }
+    .clod{
+      position:absolute; width:10px; height:10px; background:radial-gradient(circle at 30% 30%, #8a6a38, var(--dirt));
+      border-radius:50%; opacity:0;
+      animation: clod 900ms ease-out infinite;
+    }
+    .clod::after{ content:""; position:absolute; inset:0; border-radius:inherit;
+      background:radial-gradient(circle at 70% 70%, transparent 40%, rgba(0,0,0,.25));
+    }
+    @keyframes clod{
+      0%{ transform: translate(0,0) scale(.6); opacity:0 }
+      10%{ opacity:1 }
+      60%{ transform: translate(-32px,-26px) scale(1) }
+      100%{ transform: translate(-60px,8px) scale(.7); opacity:0 }
+    }
+    /* different timings/sizes */
+    .c1{ animation-delay:0ms } .c2{ animation-delay:120ms } .c3{ animation-delay:260ms }
+    .c4{ animation-delay:400ms } .c5{ animation-delay:520ms } .c6{ animation-delay:660ms }
+    .c2,.c5{ width:8px; height:8px } .c3,.c6{ width:12px; height:12px }
+    /* hazard footer label & skip */
+    .loader-ui{
+      position:absolute; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:space-between;
+      padding:8px 12px; background:
+        repeating-linear-gradient(45deg, var(--hazardA) 0 14px, var(--hazardB) 14px 28px);
+      border-top:1px solid rgba(255,255,255,.15);
+    }
+    .loader-note{ color:#0b0e14; font-weight:900; letter-spacing:.2px; text-shadow:0 1px 0 rgba(255,255,255,.35); mix-blend-mode:screen }
+    .btn-skip{
+      background:#fff; color:#0b0e14; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;
+    }
 
-    h1{margin:0; font-weight:700; letter-spacing:.4px;}
-    h1 .sub{display:block; font-size:.8rem; color:var(--muted); font-weight:500}
+    /* Reduce motion */
+    @media (prefers-reduced-motion:reduce){
+      .rig{ animation:none }
+      .clod{ animation:none; opacity:1 }
+    }
 
-    .notice{
-      margin-top:6px; color:var(--muted); font-size:.95rem;
+    /* ===== Main Under-Construction ===== */
+    .wrap{
+      width:min(92vw, 820px);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:26px;
+      backdrop-filter: blur(8px) saturate(130%);
+      box-shadow: 0 0 18px rgba(105,225,255,.35), 0 0 48px rgba(179,137,255,.18);
     }
-    .notice strong{color:#cfe8ff}
+    .hazard{
+      position:relative; overflow:hidden; border-radius:12px; border:1px solid rgba(255,255,255,.12);
+      background:repeating-linear-gradient(45deg, var(--hazardA) 0 16px, var(--hazardB) 16px 32px);
+      padding:14px 16px; margin-bottom:18px;
+    }
+    .hazard h1{
+      margin:0; text-align:center; font-size:clamp(1.1rem, 3.8vw, 1.6rem);
+      color:#0b0e14; font-weight:900; letter-spacing:.2px;
+      text-shadow:0 1px 0 rgba(255,255,255,.35); mix-blend-mode:screen;
+    }
+    .lead{ text-align:center; color:var(--muted); margin:8px auto 18px }
 
-    .panel{
-      margin-top:18px; display:grid; grid-template-columns: 1fr auto; gap:14px; align-items:center;
+    /* Cage and worker */
+    .cage{
+      position:relative; margin:0 auto; width:min(86vw, 520px); height:min(80vh, 380px);
+      border-radius:16px; overflow:hidden; user-select:none; touch-action:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(105,225,255,.45);
+      box-shadow: inset 0 0 20px rgba(105,225,255,.15), inset 0 0 48px rgba(179,137,255,.12);
     }
-    #status{
-      font-size:1.05rem; color:#d7e9ff; text-shadow:0 0 8px #69e1ff33;
+    .bolt{ position:absolute; width:10px; height:10px; border-radius:50%; background:var(--steel); box-shadow:inset 0 0 3px #222}
+    .bolt.bl{left:8px; bottom:8px} .bolt.br{right:8px; bottom:8px}
+    .bolt.tl{left:8px; top:8px} .bolt.tr{right:8px; top:8px}
+    .stickman{
+      position:absolute; width:54px; height:90px; transform:translate(-50%,-50%);
+      transition: transform .28s cubic-bezier(.2,.8,.2,1);
+      filter: drop-shadow(0 0 10px rgba(105,225,255,.55));
     }
-    .controls{display:flex; gap:10px; flex-wrap:wrap}
-    button{
-      background:linear-gradient(180deg, #69e1ff, #4bcdf0);
-      border:none; color:#03121a; font-weight:700; padding:10px 14px; border-radius:10px;
-      cursor:pointer; box-shadow: var(--glow); transition: transform .08s ease, filter .15s ease;
+    .scared{ animation: shake .38s ease-in-out 1 }
+    @keyframes shake{
+      0%{ transform:translate(var(--tx), var(--ty)) rotate(0deg) }
+      25%{ transform:translate(calc(var(--tx) + 2px), calc(var(--ty) - 3px)) rotate(-3deg) }
+      50%{ transform:translate(calc(var(--tx) - 2px), calc(var(--ty) + 2px)) rotate(2deg) }
+      75%{ transform:translate(calc(var(--tx) + 1px), calc(var(--ty) - 2px)) rotate(-2deg) }
+      100%{ transform:translate(var(--tx), var(--ty)) rotate(0deg) }
     }
-    button:hover{filter:brightness(1.05)}
-    button:active{transform:translateY(1px)}
-
-    #scorebar{
-      margin-top:6px; font-size:.95rem; color:var(--muted);
-    }
-    #scorebar strong{color:#e6eef9}
-
-    /* board */
-    #board{
-      margin:18px 0 6px;
-      display:grid; grid-template-columns:repeat(3, minmax(86px, 120px)); grid-template-rows:repeat(3, minmax(86px, 120px));
-      gap:10px; justify-content:center;
-    }
-    .cell{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border:1px solid rgba(105,225,255,.35);
-      border-radius:14px; display:flex; align-items:center; justify-content:center;
-      font-size:2.4rem; user-select:none; cursor:pointer; position:relative; overflow:hidden;
-      box-shadow: inset 0 0 18px rgba(105,225,255,.06);
-      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
-    }
-    .cell:hover{transform:translateY(-1px); box-shadow: inset 0 0 22px rgba(105,225,255,.1), var(--glow); border-color: rgba(179,137,255,.55)}
-    .cell.taken{cursor:default}
-    .rune{filter: drop-shadow(0 0 10px #69e1ff88) drop-shadow(0 0 20px #b389ff55)}
-    .rune.x{color:#69e1ff}
-    .rune.o{color:#b389ff}
-    .winflash{animation: win 1s ease-in-out 3}
-    @keyframes win{0%,100%{box-shadow: inset 0 0 18px rgba(105,225,255,.06)}50%{box-shadow: inset 0 0 40px rgba(179,137,255,.35)}}
-
-    footer{
-      margin-top:16px; font-size:.85rem; color:var(--muted); text-align:center;
-    }
-    footer a{color:#9fdcff; text-decoration:none}
-
-    /* accessibility toggle */
-    .toggle{
-      appearance:none; width:44px; height:26px; border-radius:999px; background:#21303a; position:relative; outline:none; cursor:pointer; border:1px solid #4bcdf0aa;
-    }
-    .toggle::after{
-      content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
-      background:#69e1ff; transition: all .18s ease;
-      box-shadow: 0 0 10px #69e1ff99, inset 0 0 6px #154a57;
-    }
-    .toggle:checked{background:#3a294e; border-color:#b389ffaa}
-    .toggle:checked::after{left:21px; background:#b389ff}
-    .label-tog{display:flex; align-items:center; gap:8px; font-size:.9rem; color:var(--muted)}
-    @media (max-width:500px){ .panel{grid-template-columns:1fr} }
+    .hint{ text-align:center; color:var(--muted); margin-top:12px }
   </style>
 </head>
 <body>
-  <canvas id="fx"></canvas>
-  <main class="wrap" role="main" aria-label="Tρίλιζα — σκοτεινό bot">
-    <header>
-      <div class="brand">
-        <div class="orb" aria-hidden="true"></div>
-        <h1>polygrav.com <span class="sub">Η σελίδα του Χρόνη — <em>υπό κατασκευή</em></span></h1>
+  <!-- ===== Loader with Bulldozer ===== -->
+  <div id="loader" role="dialog" aria-label="Φόρτωση — φορτωτής σπρώχνει χώμα">
+    <div class="scene">
+      <h2>Φορτώνουμε το εργοτάξιο… ⛏️🚧</h2>
+
+      <!-- moving rig: dozer + dirt spray are inside, so they travel together -->
+      <div class="rig" aria-hidden="true">
+        <!-- Simple bulldozer SVG -->
+        <svg class="dozer" viewBox="0 0 240 140">
+          <!-- track base -->
+          <rect x="20" y="100" width="140" height="22" rx="6" fill="#2d2f36"/>
+          <!-- wheels -->
+          <circle cx="50" cy="111" r="9" fill="#16181d"/><circle cx="85" cy="111" r="9" fill="#16181d"/>
+          <circle cx="120" cy="111" r="9" fill="#16181d"/><circle cx="155" cy="111" r="9" fill="#16181d"/>
+
+          <!-- body -->
+          <rect x="48" y="64" width="92" height="34" rx="6" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
+          <rect x="70" y="40" width="54" height="36" rx="6" fill="#ffd983" stroke="#d6a94a" stroke-width="2"/>
+          <rect x="78" y="46" width="38" height="22" rx="3" fill="#a6d7ff"/>
+          <!-- exhaust -->
+          <rect x="62" y="36" width="6" height="16" rx="2" fill="#444"/>
+
+          <!-- arm -->
+          <rect x="140" y="78" width="44" height="8" rx="4" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
+          <rect x="176" y="82" width="24" height="6" rx="3" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
+
+          <!-- blade -->
+          <path d="M196 78 h32 v28 h-32 q-10 0 -10 -14 q0 -14 10 -14z" fill="#e0b24d" stroke="#b99135" stroke-width="2"/>
+        </svg>
+
+        <!-- continuous dirt spray near blade -->
+        <div class="spray">
+          <span class="clod c1"></span>
+          <span class="clod c2"></span>
+          <span class="clod c3"></span>
+          <span class="clod c4"></span>
+          <span class="clod c5"></span>
+          <span class="clod c6"></span>
+        </div>
       </div>
-      <label class="label-tog" title="Εναλλαγή ρούνων/κλασικών συμβόλων">
-        <input id="symToggle" class="toggle" type="checkbox" />
-        ρούνοι / X·O
-      </label>
-    </header>
 
-    <p class="notice">Παίξε μια <strong>σκοτεινή τρίλιζα</strong> απέναντι σε bot με <strong>τυχαία δυσκολία</strong>. Οι νίκες σου αποθηκεύονται τοπικά και παραμένουν μετά από refresh.</p>
+      <div class="ground" aria-hidden="true"></div>
 
-    <div class="panel">
-      <div id="status">Η σειρά σου!</div>
-      <div class="controls">
-        <button id="btnNew">Νέα Παρτίδα</button>
-        <button id="btnRefresh" title="Κάνει πλήρες refresh της σελίδας">Refresh</button>
-        <button id="btnResetScore" title="Μηδενισμός αποθηκευμένων νικών">Reset Σκορ</button>
+      <div class="loader-ui">
+        <div class="loader-note">🚧 O φορτωτής σπρώχνει χώμα… Ετοιμάζουμε τη σελίδα.</div>
+        <button id="btnSkip" class="btn-skip">Skip</button>
       </div>
     </div>
+  </div>
 
-    <div id="board" role="grid" aria-label="Tic-tac-toe board"></div>
-    <div id="scorebar">Νίκες: <strong id="wins">0</strong> · Δυσκολία bot: <strong id="aiMode">—</strong></div>
+  <!-- ===== Main Under-Construction Page ===== -->
+  <main class="wrap" role="main" aria-label="Under construction — εργοτάξιο">
+    <div class="hazard">
+      <h1>Η ιστοσελίδα του Χρόνη βρίσκεται <strong>under construction</strong> 🏗</h1>
+    </div>
+    <p class="lead">Άγγιξε/πλησίασε μια πλευρά του κουτιού· ο εργάτης τρομάζει και τρέχει στην απέναντι.</p>
 
-    <footer>
-      © <span id="year"></span> Polychronis Gravalas — Η ιστοσελίδα είναι <strong>υπό κατασκευή</strong>.
-      <br/>Το παιχνίδι είναι διασκεδαστικό placeholder μέχρι να ανοίξει το κανονικό site.
-    </footer>
+    <div class="cage" id="cage" aria-label="Εργοτάξιο — κλουβί με stick-man">
+      <div class="bolt tl" aria-hidden="true"></div>
+      <div class="bolt tr" aria-hidden="true"></div>
+      <div class="bolt bl" aria-hidden="true"></div>
+      <div class="bolt br" aria-hidden="true"></div>
+    </div>
+
+    <div class="hint">© Polychronis Gravalas — Η ιστοσελίδα είναι <strong>υπό κατασκευή</strong>.</div>
   </main>
 
   <script>
-    // ---------- starfield / mystical motes ----------
+    // ===== Loader control =====
     (function(){
-      const c = document.getElementById('fx'), ctx = c.getContext('2d');
-      let w, h, P=[];
-      const RND = (a,b)=>a+Math.random()*(b-a);
-      const init=()=>{ w = c.width = innerWidth; h = c.height = innerHeight; P = [];
-        const count = Math.floor((w*h)/18000);
-        for(let i=0;i<count;i++){
-          P.push({x:RND(0,w), y:RND(0,h), r:RND(.3,1.6), vx:RND(-.05,.05), vy:RND(.02,.18), a:RND(.35,.95)});
-        }
-      };
-      const tick=()=>{
-        ctx.clearRect(0,0,w,h);
-        for(const p of P){
-          p.x+=p.vx; p.y+=p.vy; if(p.y>h||p.x<0||p.x>w){p.x=RND(0,w); p.y=-10}
-          const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*8);
-          g.addColorStop(0,`rgba(179,137,255,${p.a})`);
-          g.addColorStop(1,`rgba(105,225,255,0)`);
-          ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-        }
-        requestAnimationFrame(tick);
-      };
-      addEventListener('resize', init, {passive:true});
-      init(); tick();
+      const loader = document.getElementById('loader');
+      const btnSkip = document.getElementById('btnSkip');
+      let timer = setTimeout(hideLoader, 5200); // auto-hide
+
+      btnSkip.addEventListener('click', hideLoader);
+      function hideLoader(){
+        clearTimeout(timer);
+        loader.classList.add('hidden');
+        setTimeout(()=>loader.remove(), 450);
+      }
+      // Expose if you want to call it from elsewhere later:
+      window.hideLoader = hideLoader;
     })();
 
-    // ---------- game ----------
-    const boardEl = document.getElementById("board");
-    const statusEl = document.getElementById("status");
-    const winsEl = document.getElementById("wins");
-    const aiModeEl = document.getElementById("aiMode");
-    const btnNew = document.getElementById("btnNew");
-    const btnRefresh = document.getElementById("btnRefresh");
-    const btnResetScore = document.getElementById("btnResetScore");
-    const symToggle = document.getElementById("symToggle");
-    const yearEl = document.getElementById("year");
-    yearEl.textContent = new Date().getFullYear();
+    // ===== Worker stick-man in cage =====
+    (function(){
+      const cage = document.getElementById('cage');
 
-    let board = Array(9).fill(null);
-    let gameOver = false;
-    let wins = parseInt(localStorage.getItem("wins") || "0");
-    winsEl.textContent = wins;
+      // Create worker stickman (SVG) with helmet
+      const sm = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      sm.setAttribute('viewBox','0 0 54 90');
+      sm.classList.add('stickman');
+      sm.innerHTML = `
+        <!-- helmet -->
+        <path d="M12 18 q15 -14 30 0 v3 H12z" fill="#ffcc66" stroke="#d6a94a" stroke-width="1.5"/>
+        <rect x="12" y="21" width="30" height="2" fill="#d6a94a" />
+        <!-- head -->
+        <circle cx="27" cy="30" r="10" fill="none" stroke="#e9f2ff" stroke-width="2"/>
+        <!-- eyes -->
+        <circle id="eyeL" cx="23" cy="28" r="1.6" fill="#e9f2ff"/>
+        <circle id="eyeR" cx="31" cy="28" r="1.6" fill="#e9f2ff"/>
+        <!-- mouth -->
+        <path id="mouth" d="M21 34 q6 -4 12 0" stroke="#e9f2ff" stroke-width="2" fill="none" />
+        <!-- body -->
+        <line x1="27" y1="40" x2="27" y2="64" stroke="#e9f2ff" stroke-width="2"/>
+        <!-- arms -->
+        <line x1="27" y1="46" x2="13" y2="54" stroke="#e9f2ff" stroke-width="2"/>
+        <line x1="27" y1="46" x2="41" y2="54" stroke="#e9f2ff" stroke-width="2"/>
+        <!-- legs -->
+        <line x1="27" y1="64" x2="17" y2="86" stroke="#e9f2ff" stroke-width="2"/>
+        <line x1="27" y1="64" x2="37" y2="86" stroke="#e9f2ff" stroke-width="2"/>
+      `;
+      cage.appendChild(sm);
 
-    // symbol sets: runes vs classic
-    const RUNE_X = "ᛉ"; // algiz rune for player
-    const RUNE_O = "ᚩ"; // os rune for bot
-    let useRunes = true;
-
-    function symOf(v){ if(!v) return ""; if(useRunes) return v==="X"?RUNE_X:RUNE_O; return v; }
-
-    // build grid
-    boardEl.innerHTML = "";
-    for (let i = 0; i < 9; i++) {
-      const cell = document.createElement("button");
-      cell.type = "button";
-      cell.className = "cell";
-      cell.setAttribute("role","gridcell");
-      cell.setAttribute("aria-label","κενό");
-      cell.dataset.index = i;
-      cell.addEventListener("click", onPlayer);
-      boardEl.appendChild(cell);
-    }
-
-    function renderCell(i){
-      const el = boardEl.children[i];
-      el.textContent = symOf(board[i]);
-      el.classList.toggle("taken", !!board[i]);
-      el.classList.toggle("rune", true);
-      if(board[i]==="X"){ el.classList.add("rune","x"); el.setAttribute("aria-label","Χ (δικό σου)"); }
-      else if(board[i]==="O"){ el.classList.add("rune","o"); el.setAttribute("aria-label","Ο (bot)"); }
-      else { el.classList.remove("x","o"); el.setAttribute("aria-label","κενό"); }
-    }
-
-    function onPlayer(e){
-      if (gameOver) return;
-      const idx = +e.currentTarget.dataset.index;
-      if (board[idx]) return;
-      board[idx] = "X";
-      renderCell(idx);
-
-      if (checkWinner("X")) { endGame("Κέρδισες! 🎉", true); return; }
-      if (board.every(Boolean)) { endGame("Ισοπαλία 🤝"); return; }
-
-      // bot plays shortly after
-      setTimeout(botMove, 420);
-    }
-
-    // choose AI mode each game start (and sometimes mid-game to feel "unstable")
-    let aiMode = "—"; // "χαζό" | "μπλοκαριστικό" | "τέλειο (minimax light)"
-    function pickAIMode(){
-      const r = Math.random();
-      aiMode = r < 0.40 ? "χαζό" : r < 0.85 ? "μπλοκαριστικό" : "τέλειο";
-      aiModeEl.textContent = aiMode;
-    }
-    pickAIMode();
-
-    function botMove(){
-      if (gameOver) return;
-      // 10% chance to randomly shift difficulty mid-game
-      if (Math.random() < 0.10) pickAIMode();
-
-      let move = null;
-      if (aiMode === "χαζό"){
-        move = randomFree();
-      } else if (aiMode === "μπλοκαριστικό"){
-        move = findWin("O") ?? findWin("X") ?? randomFree();
-      } else {
-        // "τέλειο": try to win, block, take center, take corner, else random
-        move = findWin("O") ?? findWin("X") ?? bestHeuristic() ?? randomFree();
+      // Position (percent of cage)
+      let xPct = 0.25, yPct = 0.5; // start left-middle
+      function applyPos(){
+        const r = cage.getBoundingClientRect();
+        const x = r.width * xPct;
+        const y = r.height * yPct;
+        sm.style.setProperty('--tx', `${x - 27}px`);
+        sm.style.setProperty('--ty', `${y - 45}px`);
+        sm.style.transform = `translate(${x - 27}px, ${y - 45}px)`;
       }
-      if (move == null) return;
-      board[move] = "O";
-      renderCell(move);
+      applyPos();
 
-      if (checkWinner("O")) { endGame("Έχασες 😢 — πάτα Refresh αν θες!", false, lastWinLine); return; }
-      if (board.every(Boolean)) { endGame("Ισοπαλία 🤝"); return; }
-    }
+      function scareTo(side){
+        const eyeL = sm.querySelector('#eyeL');
+        const eyeR = sm.querySelector('#eyeR');
+        const mouth = sm.querySelector('#mouth');
+        eyeL.setAttribute('r','2.2'); eyeR.setAttribute('r','2.2');
+        mouth.setAttribute('d','M21 34 q6 4 12 0'); // τρομαγμένο «ω»
+        clearTimeout(faceTimer);
 
-    const lines = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
-    let lastWinLine = null;
+        const margin = 0.18; // μακριά από τον τοίχο (ποσοστό)
+        if (side === 'left') xPct = 1 - margin;
+        if (side === 'right') xPct = margin;
+        if (side === 'top') yPct = 1 - margin;
+        if (side === 'bottom') yPct = margin;
 
-    function findWin(sym){
-      for (let L of lines){
-        const [a,b,c]=L, vals=[board[a],board[b],board[c]];
-        if(vals.filter(v=>v===sym).length===2 && vals.includes(null)){
-          lastWinLine=L; return [a,b,c][vals.indexOf(null)];
-        }
+        applyPos();
+
+        sm.classList.remove('scared'); void sm.offsetWidth; sm.classList.add('scared'); // restart anim
+        faceTimer = setTimeout(()=>{
+          eyeL.setAttribute('r','1.6'); eyeR.setAttribute('r','1.6');
+          mouth.setAttribute('d','M21 34 q6 -4 12 0');
+        }, 550);
       }
-      return null;
-    }
+      let faceTimer = 0;
 
-    function bestHeuristic(){
-      // take center
-      if (!board[4]) return 4;
-      // take winning/corner priorities
-      const corners=[0,2,6,8].filter(i=>!board[i]);
-      if (corners.length){
-        // prefer opposite corner to player's first corner
-        const oppMap = {0:8, 2:6, 6:2, 8:0};
-        for (let c of [0,2,6,8]) if(board[c]==="X" && !board[oppMap[c]]) return oppMap[c];
-        return corners[Math.floor(Math.random()*corners.length)];
+      function onPoint(x,y){
+        const r = cage.getBoundingClientRect();
+        const px = x - r.left, py = y - r.top;
+        const margin = 22; // px ευαισθησίας
+        const nearLeft   = px <= margin;
+        const nearRight  = px >= r.width - margin;
+        const nearTop    = py <= margin;
+        const nearBottom = py >= r.height - margin;
+
+        if (nearLeft) scareTo('left');
+        else if (nearRight) scareTo('right');
+        else if (nearTop) scareTo('top');
+        else if (nearBottom) scareTo('bottom');
       }
-      // edges
-      const edges=[1,3,5,7].filter(i=>!board[i]);
-      if (edges.length) return edges[Math.floor(Math.random()*edges.length)];
-      return null;
-    }
 
-    function randomFree(){
-      const free = board.map((v,i)=>v?null:i).filter(v=>v!==null);
-      if(!free.length) return null;
-      return free[(Math.random()*free.length)|0];
-    }
+      // Mouse & touch
+      cage.addEventListener('mousemove', (e)=> onPoint(e.clientX, e.clientY));
+      cage.addEventListener('touchstart', (e)=>{ const t = e.touches[0]; onPoint(t.clientX, t.clientY); }, {passive:true});
+      cage.addEventListener('touchmove', (e)=>{ const t = e.touches[0]; onPoint(t.clientX, t.clientY); }, {passive:true});
 
-    function checkWinner(sym){
-      for (let L of lines){
-        const [a,b,c]=L;
-        if(board[a]===sym && board[b]===sym && board[c]===sym){
-          lastWinLine=L; [a,b,c].forEach(i=>boardEl.children[i].classList.add('winflash'));
-          return true;
-        }
-      }
-      return false;
-    }
-
-    function endGame(msg, addWin=false, winline=null){
-      statusEl.textContent = msg;
-      gameOver = true;
-      if (addWin){
-        wins++; localStorage.setItem("wins", wins); winsEl.textContent = wins;
-      }
-    }
-
-    function resetGame(){
-      board = Array(9).fill(null);
-      Array.from(boardEl.children).forEach((c,i)=>{
-        c.classList.remove("taken","winflash","x","o");
-        c.textContent = "";
-        c.setAttribute("aria-label","κενό");
-      });
-      gameOver = false; statusEl.textContent = "Η σειρά σου!";
-      lastWinLine = null; pickAIMode();
-    }
-
-    // controls
-    btnNew.addEventListener('click', resetGame);
-    btnRefresh.addEventListener('click', ()=>location.reload());
-    btnResetScore.addEventListener('click', ()=>{
-      if(confirm("Σίγουρα να μηδενίσω τις αποθηκευμένες νίκες;")){
-        wins=0; localStorage.setItem("wins","0"); winsEl.textContent = "0";
-      }
-    });
-    symToggle.addEventListener('change', ()=>{
-      useRunes = !symToggle.checked ? true : false; // left = runes, right = X/O
-      // re-render all
-      for (let i=0;i<9;i++) renderCell(i);
-    });
-
-    // initial cells render
-    for (let i=0;i<9;i++) renderCell(i);
+      // Recompute on resize for correct centering
+      addEventListener('resize', applyPos, {passive:true});
+    })();
   </script>
 </body>
 </html>
