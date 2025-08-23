@@ -173,6 +173,60 @@
     if(mq.matches){
       document.querySelectorAll('.fog, .stars').forEach(el=>{ el.style.animation = 'none'; });
     }
+      // 🧿 Oracle / Riddle logic
+    const prophecies = [
+      'θα βρεις λύση εκεί που νόμιζες πως δεν υπάρχει πόρτα.',
+      'ένα παλιό email θα φέρει καινούρια ιδέα.',
+      'ο άνεμος της αλλαγής φυσάει από τα δυτικά έργα σου.',
+      'μια μικρή απόφαση σήμερα, μεγάλος δρόμος αύριο.',
+      'κάποιος σύμμαχος σε παρατηρεί αθόρυβα – μίλα του.',
+      'η υπομονή σου γυαλίζει σαν ατσάλι κάτω από ομίχλη.',
+      'δύο δρόμοι ενώνονται: ο πρακτικός και ο οραματικός.',
+      'το σχέδιο που φοβάσαι να δείξεις είναι το σωστό.',
+      'μια ευθυγράμμιση προθεσμιών θα σε δικαιώσει.',
+      'μην κλειδώσεις την πόρτα που ανοίγει μόνη της.',
+      'το νερό βρίσκει πάντα δίοδο – και εσύ επίσης.',
+      'όταν μετράς σωστά, τα ρίσκα μικραίνουν.',
+      'ένας αριθμός σε spreadsheet κρύβει χαμόγελο.',
+      'τρία τηλέφωνα, μία συνάντηση, μηδέν εμπόδια.',
+      'εκεί που οι άλλοι βλέπουν χώμα, εσύ βλέπεις θεμέλιο.',
+      'το «όχι ακόμα» μετατρέπεται σε «τώρα».',
+      'μια ανωμαλία στα δεδομένα θα γίνει πλεονέκτημα.',
+      'ό,τι επισκευάζεις έξω, ισιώνει και μέσα σου.',
+      'ο χάρτης αλλάζει σχήμα – εσύ κρατάς την κλίμακα.',
+      'η σιωπή πριν το μεσημέρι κρύβει καλή είδηση.'
+    ];
+
+    function formatTime(d){
+      return d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+    }
+
+    const openedAt = new Date();
+    const oracleLine = document.getElementById('oracleLine');
+    const oracleMeta = document.getElementById('oracleMeta');
+    const eyePick = document.getElementById('eyePick');
+
+    function revealForEye(eye){
+      const seed = (openedAt.getHours()*60 + openedAt.getMinutes()) + eye.charCodeAt(0);
+      const idx = seed % prophecies.length;
+      oracleLine.innerHTML = `Η ώρα που άνοιξες τη σελίδα (<strong>${formatTime(openedAt)}</strong>) σε συνδυασμό με το χρώμα των ματιών σου (<strong>${eye}</strong>) μου αποδεικνύουν ότι <em>${prophecies[idx]}</em>`;
+      oracleMeta.textContent = 'Αν διάλεξες λάθος χρώμα… η μοίρα επιμένει, αλλά μπορείς να την πειράξεις 😉';
+    }
+
+    const defaultEye = 'Καφέ';
+    revealForEye(defaultEye);
+    function setActive(eye){
+      document.querySelectorAll('.eyepill').forEach(p=>p.classList.toggle('active', p.dataset.eye===eye));
+    }
+    setActive(defaultEye);
+
+    eyePick?.addEventListener('click', (e)=>{
+      const pill = e.target.closest('.eyepill');
+      if(!pill) return;
+      const eye = pill.dataset.eye;
+      setActive(eye);
+      revealForEye(eye);
+    });
   </script>
 </body>
 </html>
