@@ -1,325 +1,102 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Η σελίδα του Χρόνη — Under Construction 🏗</title>
-  <meta name="description" content="Η ιστοσελίδα του Χρόνη βρίσκεται under construction. Φορτωτής σπρώχνει χώμα (loading) και ένας worker stick-man φοβάται στο κλουβί." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polychronis Gravalas — Civil Engineer • PV Specialist • Creator</title>
+  <meta name="description" content="Portfolio & CV of Polychronis Gravalas — Civil Engineer, PV Specialist, and Creative Technologist." />
   <style>
-    :root{
-      --bg:#0a0d12; --ink:#e9f2ff; --muted:#9aa4b2;
-      --accent:#69e1ff; --accent2:#ffcc66; --glass:rgba(255,255,255,.06);
-      --hazardA:#0b0e14; --hazardB:#ffc107;
-      --dirt:#7a5a2b; --dirt2:#5e4520; --steel:#6b7685;
+    :root {
+      --bg:#0b0d10; --ink:#e8eef5; --muted:#9aa7b3; --card:#12161b; --line:#1c232b; --accent:#0ea5e9;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      margin:0; background:
-        radial-gradient(1100px 600px at 15% 10%, rgba(105,225,255,.12), transparent 60%),
-        radial-gradient(900px 600px at 80% 80%, rgba(255,204,102,.10), transparent 60%),
-        var(--bg);
-      color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Arial;
-      display:flex; align-items:center; justify-content:center; padding:24px;
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      background:var(--bg); color:var(--ink); line-height:1.6;
     }
-
-    /* ===== Loader (Bulldozer pushing dirt) ===== */
-    #loader{
-      position:fixed; inset:0; z-index:9999; display:grid; place-items:center;
-      background:
-        radial-gradient(1100px 600px at 15% 10%, rgba(105,225,255,.12), transparent 60%),
-        radial-gradient(900px 600px at 80% 80%, rgba(255,204,102,.10), transparent 60%),
-        var(--bg);
-      transition:opacity .4s ease, visibility .4s ease;
+    header{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:20px 30px; border-bottom:1px solid var(--line);
+      position:sticky;top:0;background:rgba(11,13,16,.85);backdrop-filter:blur(6px);
     }
-    #loader.hidden{ opacity:0; visibility:hidden }
-    .scene{
-      width:min(92vw, 900px); height:min(70vh, 360px);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px 18px 0;
-      backdrop-filter: blur(8px) saturate(130%);
-      box-shadow: 0 0 18px rgba(105,225,255,.35), 0 0 48px rgba(179,137,255,.18);
-      position:relative; overflow:hidden;
+    header h1{font-size:20px;color:var(--accent)}
+    nav a{margin-left:20px;color:var(--ink);text-decoration:none;opacity:.8}
+    nav a:hover{opacity:1}
+    .wrap{max-width:1000px;margin:0 auto;padding:40px 20px}
+    h2{margin-top:40px;margin-bottom:10px;color:var(--accent)}
+    .cv-btn {
+      display:inline-block;margin-top:15px;padding:12px 20px;
+      background:linear-gradient(135deg,#0891b2,#0ea5e9);color:#fff;font-weight:600;
+      border-radius:10px;text-decoration:none;transition:all .25s ease;
+      box-shadow:0 2px 6px rgba(0,0,0,.25);
     }
-    .scene h2{
-      margin:0 0 8px; font-size:clamp(1.05rem, 2.6vw, 1.3rem); text-align:center; color:var(--ink);
-    }
-    .ground{
-      position:absolute; left:0; right:0; bottom:0; height:84px;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.15)),
-        repeating-linear-gradient(0deg, var(--dirt) 0 6px, var(--dirt2) 6px 12px);
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .rig{
-      position:absolute; left:-15%; bottom:70px; width:240px; height:140px;
-      animation: dozer 6s linear infinite;
-      will-change: transform;
-    }
-    @keyframes dozer{
-      0%{ transform: translateX(0) }
-      100%{ transform: translateX(125vw) }
-    }
-    .dozer{ width:240px; height:140px; filter: drop-shadow(0 6px 8px rgba(0,0,0,.35)); }
-    /* Dirt spray emitted near blade; children move with the rig, clods animate individually */
-    .spray{ position:absolute; left:164px; top:66px; width:0; height:0; }
-    .clod{
-      position:absolute; width:10px; height:10px; background:radial-gradient(circle at 30% 30%, #8a6a38, var(--dirt));
-      border-radius:50%; opacity:0;
-      animation: clod 900ms ease-out infinite;
-    }
-    .clod::after{ content:""; position:absolute; inset:0; border-radius:inherit;
-      background:radial-gradient(circle at 70% 70%, transparent 40%, rgba(0,0,0,.25));
-    }
-    @keyframes clod{
-      0%{ transform: translate(0,0) scale(.6); opacity:0 }
-      10%{ opacity:1 }
-      60%{ transform: translate(-32px,-26px) scale(1) }
-      100%{ transform: translate(-60px,8px) scale(.7); opacity:0 }
-    }
-    /* different timings/sizes */
-    .c1{ animation-delay:0ms } .c2{ animation-delay:120ms } .c3{ animation-delay:260ms }
-    .c4{ animation-delay:400ms } .c5{ animation-delay:520ms } .c6{ animation-delay:660ms }
-    .c2,.c5{ width:8px; height:8px } .c3,.c6{ width:12px; height:12px }
-    /* hazard footer label & skip */
-    .loader-ui{
-      position:absolute; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:space-between;
-      padding:8px 12px; background:
-        repeating-linear-gradient(45deg, var(--hazardA) 0 14px, var(--hazardB) 14px 28px);
-      border-top:1px solid rgba(255,255,255,.15);
-    }
-    .loader-note{ color:#0b0e14; font-weight:900; letter-spacing:.2px; text-shadow:0 1px 0 rgba(255,255,255,.35); mix-blend-mode:screen }
-    .btn-skip{
-      background:#fff; color:#0b0e14; border:none; padding:6px 12px; border-radius:8px; font-weight:800; cursor:pointer;
-    }
-
-    /* Reduce motion */
-    @media (prefers-reduced-motion:reduce){
-      .rig{ animation:none }
-      .clod{ animation:none; opacity:1 }
-    }
-
-    /* ===== Main Under-Construction ===== */
-    .wrap{
-      width:min(92vw, 820px);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:26px;
-      backdrop-filter: blur(8px) saturate(130%);
-      box-shadow: 0 0 18px rgba(105,225,255,.35), 0 0 48px rgba(179,137,255,.18);
-    }
-    .hazard{
-      position:relative; overflow:hidden; border-radius:12px; border:1px solid rgba(255,255,255,.12);
-      background:repeating-linear-gradient(45deg, var(--hazardA) 0 16px, var(--hazardB) 16px 32px);
-      padding:14px 16px; margin-bottom:18px;
-    }
-    .hazard h1{
-      margin:0; text-align:center; font-size:clamp(1.1rem, 3.8vw, 1.6rem);
-      color:#0b0e14; font-weight:900; letter-spacing:.2px;
-      text-shadow:0 1px 0 rgba(255,255,255,.35); mix-blend-mode:screen;
-    }
-    .lead{ text-align:center; color:var(--muted); margin:8px auto 18px }
-
-    /* Cage and worker */
-    .cage{
-      position:relative; margin:0 auto; width:min(86vw, 520px); height:min(80vh, 380px);
-      border-radius:16px; overflow:hidden; user-select:none; touch-action:none;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid rgba(105,225,255,.45);
-      box-shadow: inset 0 0 20px rgba(105,225,255,.15), inset 0 0 48px rgba(179,137,255,.12);
-    }
-    .bolt{ position:absolute; width:10px; height:10px; border-radius:50%; background:var(--steel); box-shadow:inset 0 0 3px #222}
-    .bolt.bl{left:8px; bottom:8px} .bolt.br{right:8px; bottom:8px}
-    .bolt.tl{left:8px; top:8px} .bolt.tr{right:8px; top:8px}
-    .stickman{
-      position:absolute; width:54px; height:90px; transform:translate(-50%,-50%);
-      transition: transform .28s cubic-bezier(.2,.8,.2,1);
-      filter: drop-shadow(0 0 10px rgba(105,225,255,.55));
-    }
-    .scared{ animation: shake .38s ease-in-out 1 }
-    @keyframes shake{
-      0%{ transform:translate(var(--tx), var(--ty)) rotate(0deg) }
-      25%{ transform:translate(calc(var(--tx) + 2px), calc(var(--ty) - 3px)) rotate(-3deg) }
-      50%{ transform:translate(calc(var(--tx) - 2px), calc(var(--ty) + 2px)) rotate(2deg) }
-      75%{ transform:translate(calc(var(--tx) + 1px), calc(var(--ty) - 2px)) rotate(-2deg) }
-      100%{ transform:translate(var(--tx), var(--ty)) rotate(0deg) }
-    }
-    .hint{ text-align:center; color:var(--muted); margin-top:12px }
+    .cv-btn:hover{background:linear-gradient(135deg,#0ea5e9,#38bdf8);transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+    ul{list-style:none;padding:0}
+    ul li{padding:6px 0;border-bottom:1px solid var(--line)}
+    footer{margin-top:60px;padding:20px;text-align:center;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+    footer a{color:var(--accent);text-decoration:none}
   </style>
 </head>
 <body>
-  <!-- ===== Loader with Bulldozer ===== -->
-  <div id="loader" role="dialog" aria-label="Φόρτωση — φορτωτής σπρώχνει χώμα">
-    <div class="scene">
-      <h2>Φορτώνουμε το εργοτάξιο… ⛏️🚧</h2>
+<header>
+  <h1>Polychronis Gravalas</h1>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+    <a href="other-half.html">My Other Half</a>
+  </nav>
+</header>
 
-      <!-- moving rig: dozer + dirt spray are inside, so they travel together -->
-      <div class="rig" aria-hidden="true">
-        <!-- Simple bulldozer SVG -->
-        <svg class="dozer" viewBox="0 0 240 140">
-          <!-- track base -->
-          <rect x="20" y="100" width="140" height="22" rx="6" fill="#2d2f36"/>
-          <!-- wheels -->
-          <circle cx="50" cy="111" r="9" fill="#16181d"/><circle cx="85" cy="111" r="9" fill="#16181d"/>
-          <circle cx="120" cy="111" r="9" fill="#16181d"/><circle cx="155" cy="111" r="9" fill="#16181d"/>
+<div class="wrap">
+  <section id="about">
+    <h2>About Me</h2>
+    <p>Γεννήθηκα στη Θεσσαλονίκη, όπου και σπούδασα. Μεγάλωσα μέσα σε οικογένεια που δραστηριοποιούνταν στις κατασκευές·
+    όμως πάντα με τραβούσε η τεχνολογία, ο προγραμματισμός και ο κόσμος της φαντασίας.</p>
+    <a href="CV-POLYCHRONIS-GRAVALAS.pdf" download class="cv-btn">📄 Download CV</a>
+  </section>
 
-          <!-- body -->
-          <rect x="48" y="64" width="92" height="34" rx="6" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
-          <rect x="70" y="40" width="54" height="36" rx="6" fill="#ffd983" stroke="#d6a94a" stroke-width="2"/>
-          <rect x="78" y="46" width="38" height="22" rx="3" fill="#a6d7ff"/>
-          <!-- exhaust -->
-          <rect x="62" y="36" width="6" height="16" rx="2" fill="#444"/>
+  <section id="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li>Drone operations & surveying</li>
+      <li>AutoCAD (Expert)</li>
+      <li>Civil 3D</li>
+      <li>Global Mapper</li>
+      <li>Excel (Advanced)</li>
+    </ul>
+  </section>
 
-          <!-- arm -->
-          <rect x="140" y="78" width="44" height="8" rx="4" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
-          <rect x="176" y="82" width="24" height="6" rx="3" fill="#ffcc66" stroke="#d6a94a" stroke-width="2"/>
+  <section id="languages">
+    <h2>Languages</h2>
+    <ul>
+      <li>Greek — Native</li>
+      <li>English — B2</li>
+      <li>German — A2</li>
+    </ul>
+  </section>
 
-          <!-- blade -->
-          <path d="M196 78 h32 v28 h-32 q-10 0 -10 -14 q0 -14 10 -14z" fill="#e0b24d" stroke="#b99135" stroke-width="2"/>
-        </svg>
+  <section id="projects">
+    <h2>Projects</h2>
+    <ul>
+      <li>Supervision of luxury residences — Thermi, Thessaloniki</li>
+      <li>200 MW Solar Park — Western Macedonia</li>
+      <li>22 MW Solar Park — Larisa</li>
+      <li>71 MW Solar Park — Magnesia</li>
+      <li>10 MW Solar Park — Fthiotida</li>
+    </ul>
+  </section>
 
-        <!-- continuous dirt spray near blade -->
-        <div class="spray">
-          <span class="clod c1"></span>
-          <span class="clod c2"></span>
-          <span class="clod c3"></span>
-          <span class="clod c4"></span>
-          <span class="clod c5"></span>
-          <span class="clod c6"></span>
-        </div>
-      </div>
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:chronis.gravalas@gmail.com">chronis.gravalas@gmail.com</a></p>
+    <p>LinkedIn: <a href="https://linkedin.com/in/polychronis-gravalas" target="_blank">linkedin.com/in/polychronis-gravalas</a></p>
+  </section>
+</div>
 
-      <div class="ground" aria-hidden="true"></div>
-
-      <div class="loader-ui">
-        <div class="loader-note">🚧 O φορτωτής σπρώχνει χώμα… Ετοιμάζουμε τη σελίδα.</div>
-        <button id="btnSkip" class="btn-skip">Skip</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== Main Under-Construction Page ===== -->
-  <main class="wrap" role="main" aria-label="Under construction — εργοτάξιο">
-    <div class="hazard">
-      <h1>Η ιστοσελίδα του Χρόνη βρίσκεται <strong>under construction</strong> 🏗</h1>
-    </div>
-    <p class="lead">Άγγιξε/πλησίασε μια πλευρά του κουτιού· ο εργάτης τρομάζει και τρέχει στην απέναντι.</p>
-
-    <div class="cage" id="cage" aria-label="Εργοτάξιο — κλουβί με stick-man">
-      <div class="bolt tl" aria-hidden="true"></div>
-      <div class="bolt tr" aria-hidden="true"></div>
-      <div class="bolt bl" aria-hidden="true"></div>
-      <div class="bolt br" aria-hidden="true"></div>
-    </div>
-
-    <div class="hint">© Polychronis Gravalas — Η ιστοσελίδα είναι <strong>υπό κατασκευή</strong>.</div>
-  </main>
-
-  <script>
-    // ===== Loader control =====
-    (function(){
-      const loader = document.getElementById('loader');
-      const btnSkip = document.getElementById('btnSkip');
-      let timer = setTimeout(hideLoader, 5200); // auto-hide
-
-      btnSkip.addEventListener('click', hideLoader);
-      function hideLoader(){
-        clearTimeout(timer);
-        loader.classList.add('hidden');
-        setTimeout(()=>loader.remove(), 450);
-      }
-      // Expose if you want to call it from elsewhere later:
-      window.hideLoader = hideLoader;
-    })();
-
-    // ===== Worker stick-man in cage =====
-    (function(){
-      const cage = document.getElementById('cage');
-
-      // Create worker stickman (SVG) with helmet
-      const sm = document.createElementNS('http://www.w3.org/2000/svg','svg');
-      sm.setAttribute('viewBox','0 0 54 90');
-      sm.classList.add('stickman');
-      sm.innerHTML = `
-        <!-- helmet -->
-        <path d="M12 18 q15 -14 30 0 v3 H12z" fill="#ffcc66" stroke="#d6a94a" stroke-width="1.5"/>
-        <rect x="12" y="21" width="30" height="2" fill="#d6a94a" />
-        <!-- head -->
-        <circle cx="27" cy="30" r="10" fill="none" stroke="#e9f2ff" stroke-width="2"/>
-        <!-- eyes -->
-        <circle id="eyeL" cx="23" cy="28" r="1.6" fill="#e9f2ff"/>
-        <circle id="eyeR" cx="31" cy="28" r="1.6" fill="#e9f2ff"/>
-        <!-- mouth -->
-        <path id="mouth" d="M21 34 q6 -4 12 0" stroke="#e9f2ff" stroke-width="2" fill="none" />
-        <!-- body -->
-        <line x1="27" y1="40" x2="27" y2="64" stroke="#e9f2ff" stroke-width="2"/>
-        <!-- arms -->
-        <line x1="27" y1="46" x2="13" y2="54" stroke="#e9f2ff" stroke-width="2"/>
-        <line x1="27" y1="46" x2="41" y2="54" stroke="#e9f2ff" stroke-width="2"/>
-        <!-- legs -->
-        <line x1="27" y1="64" x2="17" y2="86" stroke="#e9f2ff" stroke-width="2"/>
-        <line x1="27" y1="64" x2="37" y2="86" stroke="#e9f2ff" stroke-width="2"/>
-      `;
-      cage.appendChild(sm);
-
-      // Position (percent of cage)
-      let xPct = 0.25, yPct = 0.5; // start left-middle
-      function applyPos(){
-        const r = cage.getBoundingClientRect();
-        const x = r.width * xPct;
-        const y = r.height * yPct;
-        sm.style.setProperty('--tx', `${x - 27}px`);
-        sm.style.setProperty('--ty', `${y - 45}px`);
-        sm.style.transform = `translate(${x - 27}px, ${y - 45}px)`;
-      }
-      applyPos();
-
-      function scareTo(side){
-        const eyeL = sm.querySelector('#eyeL');
-        const eyeR = sm.querySelector('#eyeR');
-        const mouth = sm.querySelector('#mouth');
-        eyeL.setAttribute('r','2.2'); eyeR.setAttribute('r','2.2');
-        mouth.setAttribute('d','M21 34 q6 4 12 0'); // τρομαγμένο «ω»
-        clearTimeout(faceTimer);
-
-        const margin = 0.18; // μακριά από τον τοίχο (ποσοστό)
-        if (side === 'left') xPct = 1 - margin;
-        if (side === 'right') xPct = margin;
-        if (side === 'top') yPct = 1 - margin;
-        if (side === 'bottom') yPct = margin;
-
-        applyPos();
-
-        sm.classList.remove('scared'); void sm.offsetWidth; sm.classList.add('scared'); // restart anim
-        faceTimer = setTimeout(()=>{
-          eyeL.setAttribute('r','1.6'); eyeR.setAttribute('r','1.6');
-          mouth.setAttribute('d','M21 34 q6 -4 12 0');
-        }, 550);
-      }
-      let faceTimer = 0;
-
-      function onPoint(x,y){
-        const r = cage.getBoundingClientRect();
-        const px = x - r.left, py = y - r.top;
-        const margin = 22; // px ευαισθησίας
-        const nearLeft   = px <= margin;
-        const nearRight  = px >= r.width - margin;
-        const nearTop    = py <= margin;
-        const nearBottom = py >= r.height - margin;
-
-        if (nearLeft) scareTo('left');
-        else if (nearRight) scareTo('right');
-        else if (nearTop) scareTo('top');
-        else if (nearBottom) scareTo('bottom');
-      }
-
-      // Mouse & touch
-      cage.addEventListener('mousemove', (e)=> onPoint(e.clientX, e.clientY));
-      cage.addEventListener('touchstart', (e)=>{ const t = e.touches[0]; onPoint(t.clientX, t.clientY); }, {passive:true});
-      cage.addEventListener('touchmove', (e)=>{ const t = e.touches[0]; onPoint(t.clientX, t.clientY); }, {passive:true});
-
-      // Recompute on resize for correct centering
-      addEventListener('resize', applyPos, {passive:true});
-    })();
-  </script>
+<footer>
+  <p>© 2025 Polychronis Gravalas • <a href="other-half.html">My Other Half</a></p>
+</footer>
 </body>
 </html>
