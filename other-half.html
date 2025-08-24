@@ -5,37 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>My Other Half — Polychronis Gravalas</title>
   <style>
-    body{
-      margin:0; font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto;
+    body {
+      margin:0; font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto;
       background:#05060b; color:#e6eef9; line-height:1.6;
+      overflow-x:hidden;
     }
-    header{padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)}
-    h1{font-size:28px;color:#69e1ff}
-    h2{margin-top:30px;color:#b389ff}
-    .wrap{max-width:800px;margin:0 auto;padding:40px 20px}
-    footer{margin-top:40px;padding:20px;text-align:center;font-size:14px;color:#9aa4b2;border-top:1px solid rgba(255,255,255,.1)}
-    a{color:#69e1ff;text-decoration:none}
+    header {
+      padding:20px;text-align:center;
+      border-bottom:1px solid rgba(255,255,255,.1);
+      position:relative; z-index:2;
+    }
+    h1 {
+      font-size:32px;
+      color:#69e1ff;
+      text-shadow:0 0 10px #69e1ff,0 0 20px #69e1ff;
+    }
+    h2 {
+      margin-top:30px;
+      color:#b389ff;
+      text-shadow:0 0 6px #b389ff,0 0 12px #b389ff;
+    }
+    .wrap {
+      max-width:800px;margin:0 auto;padding:40px 20px;
+      position:relative; z-index:2;
+    }
+    footer {
+      margin-top:40px;padding:20px;text-align:center;
+      font-size:14px;color:#9aa4b2;
+      border-top:1px solid rgba(255,255,255,.1);
+      position:relative; z-index:2;
+    }
+    footer a {
+      color:#69e1ff;text-decoration:none;
+      transition: all 0.3s ease;
+    }
+    footer a:hover {
+      color:#fff; text-shadow:0 0 8px #69e1ff;
+    }
+
+    /* Fade-in effect */
+    .fade-in {
+      opacity:0;
+      transform: translateY(40px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+    .fade-in.visible {
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* Elemental orbs */
+    .orbs {
+      position:relative;
+      width:100%;
+      height:150px;
+      margin-top:20px;
+    }
+    .orb {
+      position:absolute;
+      width:30px;height:30px;
+      border-radius:50%;
+      opacity:0.8;
+      animation: float 8s infinite linear;
+    }
+    .orb.fire { background:#ff4500; box-shadow:0 0 20px #ff4500; top:50%; left:10%;}
+    .orb.water { background:#1e90ff; box-shadow:0 0 20px #1e90ff; top:20%; left:50%;}
+    .orb.earth { background:#2e8b57; box-shadow:0 0 20px #2e8b57; top:70%; left:70%;}
+    .orb.air { background:#f5f5f5; box-shadow:0 0 20px #f5f5f5; top:30%; left:80%;}
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg);}
+      50% { transform: translateY(-20px) rotate(180deg);}
+      100% { transform: translateY(0) rotate(360deg);}
+    }
+
+    /* Background particles */
+    canvas#bg {
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      z-index:0;
+    }
   </style>
 </head>
 <body>
+<canvas id="bg"></canvas>
+
 <header>
   <h1>My Other Half</h1>
   <p>The side where imagination lives.</p>
 </header>
 
 <div class="wrap">
-  <section id="eugon">
+  <section id="eugon" class="fade-in">
     <h2>Eugon</h2>
     <p><em>“We will always be by your side, Eugon, my son!”</em></p>
     <p>Με τη δύναμη της οικογένειας και της πίστης μπορεί να φωτιστεί ακόμα και η πιο δυνατή πηγή σκότους.</p>
+    <div class="orbs">
+      <div class="orb fire"></div>
+      <div class="orb water"></div>
+      <div class="orb earth"></div>
+      <div class="orb air"></div>
+    </div>
   </section>
 
-  <section id="maps">
+  <section id="maps" class="fade-in">
     <h2>Fantasy Map Making & World Building</h2>
     <p>Συνδυάζοντας CAD, 3D design και world-building για να δημιουργήσω χάρτες και κόσμους που ζωντανεύουν.</p>
   </section>
 
-  <section id="games">
+  <section id="games" class="fade-in">
     <h2>Game Development (Beginners’ Forge)</h2>
     <p>Πειραματισμοί με κώδικα και ιδέες — μικρά παιχνίδια που χτίζονται βήμα-βήμα.</p>
   </section>
@@ -44,5 +122,55 @@
 <footer>
   <p><a href="index.html">← Return to Portfolio</a></p>
 </footer>
+
+<script>
+  // Intersection Observer για fade-in
+  const faders = document.querySelectorAll('.fade-in');
+  const appearOnScroll = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
+    });
+  }, {threshold:0.2});
+  faders.forEach(fader => appearOnScroll.observe(fader));
+
+  // Simple particles background
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for(let i=0;i<80;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*2+1,
+      dx: (Math.random()-0.5)*0.3,
+      dy: (Math.random()-0.5)*0.3
+    });
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    particles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0||p.x>canvas.width) p.dx*=-1;
+      if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
 </body>
 </html>
