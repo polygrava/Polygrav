@@ -2,5 +2,18 @@
 <html lang="el">
 <meta charset="utf-8">
 <title>Polygrav</title>
-<body>Δεν με έχουν χακάρει ακόμα, όλα καλά — θα επανέλθω.</body>
+<style>
+  :root { --yellow:#ffd200; --black:#0b0b0b; }
+  html,body{height:100%;margin:0}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--black);color:var(--yellow);
+    font:700 2rem/1.3 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    text-align:center;padding:2rem;letter-spacing:.5px
+  }
+  .bar{position:fixed;inset:0 0 auto 0;height:12px;
+       background:repeating-linear-gradient(45deg,var(--yellow) 0 20px,var(--black) 20px 40px)}
+</style>
+<div class="bar" aria-hidden="true"></div>
+<main>Δεν με έχουν χακάρει ακόμα, όλα καλά — θα επανέλθω.</main>
 </html>
