@@ -1,10 +1,60 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-  <meta charset="UTF-8">
-  <title>Polygrav</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Polygrav – News</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; line-height: 1.4; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    #updated { color: #666; font-size: 12px; margin-bottom: 16px; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { padding: 10px 0; border-bottom: 1px solid #eee; }
+    a { text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .meta { color:#666; font-size:12px; margin-top:4px; }
+  </style>
 </head>
 <body>
-  Καλώς ήρθες πίσω στο Polygrav!
+  <h1>Καλώς ήρθες πίσω στο Polygrav!</h1>
+  <div id="updated">Φόρτωση…</div>
+  <ul id="news"></ul>
+
+  <script>
+    async function loadNews() {
+      try {
+        const res = await fetch('./news.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        // header με τελευταία ενημέρωση
+        const upd = document.getElementById('updated');
+        upd.textContent = 'Τελευταία ενημέρωση: ' + (data.last_update || '—');
+
+        // λίστα άρθρων
+        const list = document.getElementById('news');
+        list.innerHTML = '';
+        (data.articles || []).forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <a href="${item.link}" target="_blank" rel="noopener">
+              ${item.title ?? '(χωρίς τίτλο)'}
+            </a>
+            ${item.published ? `<div class="meta">${item.published}</div>` : ''}
+            ${item.summary ? `<div class="meta">${item.summary}</div>` : ''}
+          `;
+          list.appendChild(li);
+        });
+
+        if ((data.articles || []).length === 0) {
+          list.innerHTML = '<li>Δεν βρέθηκαν άρθρα.</li>';
+        }
+      } catch (err) {
+        document.getElementById('updated').textContent = 'Σφάλμα φόρτωσης ειδήσεων.';
+        console.error(err);
+      }
+    }
+    loadNews();
+  </script>
 </body>
 </html>
